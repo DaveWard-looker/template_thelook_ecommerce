@@ -6,6 +6,8 @@
 
 # BUSINESS CASE: This view file correlates to the order_items table, which contains one unique row for each ecommerce order item place by a user.
 
+# TEST
+
 view: basic_order_items { # creates a view file with the name 'basic_order_items'
   sql_table_name: `bigquery-public-data.thelook_ecommerce.order_items` ;;  # defines the table in the database that this view is based on. This table name is used in the FROM/JOIN clause that Looker will use in SQL commands to your database.
 
