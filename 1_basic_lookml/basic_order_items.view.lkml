@@ -66,29 +66,6 @@ view: basic_order_items { # creates a view file with the name 'basic_order_items
     sql: ${created_at_month_name} = FORMAT_DATE('%B', CURRENT_DATE()) ;;
   }
 
-  dimension: is_forecast {
-    type: yesno
-    sql: ${Scenario} = CONCAT("Forecast ", FORMAT_DATE('%B', CURRENT_DATE())) ;;
-  }
-
-  dimension: is_forecast_prime {
-    type: yesno
-    sql: ${Scenario} = CONCAT("Forecast ", FORMAT_DATE('%B', DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH))) ;;
-  }
-
-  measure: total_sales_forecast {
-    type: sum
-    sql: ${sale_price} ;; # the actual SQL to be aggregated. Here sale_price will be wrapped in a SUM() function: SUM(sale_price)
-    value_format_name: usd  #apply a standard formatting in visualizations.  There are built-in value_format_names, but you can also create your own value_formats.
-    filters: [is_forecast: "Yes"]
-  }
-
-  measure: total_sales_forecast_prime {
-    type: sum
-    sql: ${sale_price} ;; # the actual SQL to be aggregated. Here sale_price will be wrapped in a SUM() function: SUM(sale_price)
-    value_format_name: usd  #apply a standard formatting in visualizations.  There are built-in value_format_names, but you can also create your own value_formats.
-    filters: [is_forecast_prime: "Yes"]
-  }
 
 
   dimension_group: shipped_at {
