@@ -45,6 +45,8 @@ view: basic_order_items { # creates a view file with the name 'basic_order_items
   }
 
   dimension: is_returned_or_cancelled {
+    description: "Can only return value of Returned or Cancelled"
+    synonyms: ["Return Sales" ,"Cancelled Sales"]
     type: string
     sql: CASE
               WHEN ${status} IN ('Returned', 'Cancelled') THEN 'Returned or Cancelled'
@@ -54,9 +56,40 @@ view: basic_order_items { # creates a view file with the name 'basic_order_items
 
   dimension_group: created_at { # dimension groups create multiple dimensions with different time granularities, in a single declaration.
     type: time
-    timeframes: [raw,time,date,week,month,quarter,year] # the different time grains to create dimensions for. They will be presented together in the Explore field-picker under one group label
+    timeframes: [raw,time,date,week,month,quarter,year,month_name] # the different time grains to create dimensions for. They will be presented together in the Explore field-picker under one group label
     sql: ${TABLE}.created_at ;;
   }
+
+  # Send to suradeep, Abshek & Rui
+  dimension: is_current_month {
+    type: yesno
+    sql: ${created_at_month_name} = FORMAT_DATE('%B', CURRENT_DATE()) ;;
+  }
+
+  dimension: is_forecast {
+    type: yesno
+    sql: ${Scenario} = CONCAT("Forecast ", FORMAT_DATE('%B', CURRENT_DATE())) ;;
+  }
+
+  dimension: is_forecast_prime {
+    type: yesno
+    sql: ${Scenario} = CONCAT("Forecast ", FORMAT_DATE('%B', DATE_SUB(CURRENT_DATE(), INTERVAL 1 MONTH))) ;;
+  }
+
+  measure: total_sales_forecast {
+    type: sum
+    sql: ${sale_price} ;; # the actual SQL to be aggregated. Here sale_price will be wrapped in a SUM() function: SUM(sale_price)
+    value_format_name: usd  #apply a standard formatting in visualizations.  There are built-in value_format_names, but you can also create your own value_formats.
+    filters: [is_forecast: "Yes"]
+  }
+
+  measure: total_sales_forecast_prime {
+    type: sum
+    sql: ${sale_price} ;; # the actual SQL to be aggregated. Here sale_price will be wrapped in a SUM() function: SUM(sale_price)
+    value_format_name: usd  #apply a standard formatting in visualizations.  There are built-in value_format_names, but you can also create your own value_formats.
+    filters: [is_forecast_prime: "Yes"]
+  }
+
 
   dimension_group: shipped_at {
     type: time
@@ -77,6 +110,8 @@ view: basic_order_items { # creates a view file with the name 'basic_order_items
   }
 
   dimension: sale_price {
+    description: "This is the total sale value of an order"
+    synonyms: ["Total Sales","Total Revenue","Sale"]
     type: number
     sql: ${TABLE}.sale_price ;;
   }
@@ -96,6 +131,13 @@ view: basic_order_items { # creates a view file with the name 'basic_order_items
     type: sum
     sql: ${sale_price} ;; # the actual SQL to be aggregated. Here sale_price will be wrapped in a SUM() function: SUM(sale_price)
     value_format_name: usd  #apply a standard formatting in visualizations.  There are built-in value_format_names, but you can also create your own value_formats.
+  }
+
+  measure: total_sale_price_this_month {
+    type: sum
+    sql: ${sale_price} ;; # the actual SQL to be aggregated. Here sale_price will be wrapped in a SUM() function: SUM(sale_price)
+    value_format_name: usd  #apply a standard formatting in visualizations.  There are built-in value_format_names, but you can also create your own value_formats.
+    filters: [is_current_month: "Yes"]
   }
 
   measure: average_sale_price {
