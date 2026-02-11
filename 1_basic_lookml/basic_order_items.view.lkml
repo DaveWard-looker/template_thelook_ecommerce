@@ -125,4 +125,54 @@ view: basic_order_items { # creates a view file with the name 'basic_order_items
     value_format_name: usd
   }
 
+
+  #####
+  ### Period Over Period Measures ###
+  ####
+
+  measure: order_count_last_year {
+    type: period_over_period
+    group_label: "PoP Measures"
+    description: "Order count from the previous year"
+    based_on: count
+    based_on_time: created_at_year
+    period: year
+    kind: previous
+  }
+
+  measure: order_count_last_year_to_date {
+    type: period_over_period
+    group_label: "PoP Measures"
+    description: "Order count Year To Date"
+    based_on: count
+    based_on_time: created_at_year
+    value_to_date: yes
+    period: year
+    kind: previous
+  }
+
+  measure: order_count_last_month {
+    group_label: "PoP Measures"
+    type: period_over_period
+    description: "Order count from the previous month"
+    based_on: count
+    based_on_time: created_at_month
+    period: month
+    kind: previous
+  }
+
+  measure: order_count_last_month_to_date {
+    group_label: "PoP Measures"
+    type: period_over_period
+    description: "Order count from the previous month to date"
+    based_on: count
+    based_on_time: created_at_month
+    value_to_date: yes
+    period: month
+    kind: previous
+  }
+
+
+
+
 }
