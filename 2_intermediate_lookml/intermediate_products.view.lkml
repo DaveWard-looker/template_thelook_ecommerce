@@ -27,6 +27,16 @@ view: intermediate_products {
     drill_fields: [name]
   }
 
+
+  dimension: brand_with_action {
+    type: string
+    sql: ${TABLE}.brand ;;
+    action: {
+      label: "Google Search"
+      url: "https://www.google.com/search?q={{ value }}"
+    }
+  }
+
   dimension: cost {
     type: number
     sql: ${TABLE}.cost ;;
