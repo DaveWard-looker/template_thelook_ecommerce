@@ -13,6 +13,10 @@ include: "/3_advanced_lookml/user_summary_unfiltered.view.lkml"
 include: "/3_advanced_lookml/user_summary_filtered.view.lkml"
 
 explore: advanced_example_ecommerce {
+  access_filter: {
+    field: users.id
+    user_attribute: user_id
+  }
   extends: [intermediate_example_ecommerce] # We'll use an `extends` parameter to reuse the Explore logic that
   # we already defined in the `intermediate_example_ecommerce.explore`` file. The inventory_items and products views
   # are brought in by extension, since they are joined into the intermediate_example_ecommerce Explore.
